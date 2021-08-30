@@ -52,7 +52,7 @@ jobs:
       - id: list-findings
         name: List Findings
         uses: CC-CIFUZZ-TEST/simple-findings-check-action@main        
-        if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
+        if: ${{ github.event_name == 'pull_request' && success() }}
         with:
           name: 'CI Fuzz Findings'
           test_collection_run: ${{ steps.start-fuzzing.outputs.test_collection_run }}
