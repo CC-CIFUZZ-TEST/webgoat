@@ -38,7 +38,7 @@ jobs:
       - id: report-coverage
         name: Report Coverage
         uses: CodeIntelligenceTesting/github-actions/report-coverage@v3
-        if: ${{ github.event_name == ‘pull_request’ && (success() || failure()) }}
+        if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
         with:
           ci_fuzz_api_token: ${{ secrets.CI_FUZZ_API_TOKEN }}
           test_collection_run: ${{ steps.start-fuzzing.outputs.test_collection_run }}
@@ -51,13 +51,13 @@ jobs:
           dashboard_address: ${{ env.WEB_APP_ADDRESS }}
       - id: list-findings
         name: List Findings
-        uses: CC-CIFUZZ-TEST/simple-findings-check-action@main
-        if: ${{ github.event_name == ‘pull_request’ && (success() || failure()) }}
+        uses: CC-CIFUZZ-TEST/simple-findings-check-action@main        
+        if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
         with:
-          name: ‘CI Fuzz Findings’
+          name: 'CI Fuzz Findings'
           test_collection_run: ${{ steps.start-fuzzing.outputs.test_collection_run }}
           ci-fuzz-api-token: ${{ secrets.CI_FUZZ_API_TOKEN }}
           serverUrl: ${{env.WEB_APP_ADDRESS}}
           projectId: ${{env.PROJECT_ID}}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repo: ${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}
+          repo: ${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}       
