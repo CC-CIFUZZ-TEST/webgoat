@@ -9,7 +9,7 @@ on:
 env:
   FUZZING_SERVER_ADDRESS: 'app.code-intelligence.com:6773'
   WEB_APP_ADDRESS:  https://app.code-intelligence.com
-
+  PROJECT_ID: "projects/organizations_89d295318b3fded6_webgoat_git-95e1f92d"
 
 jobs:
   fuzz_tests:
@@ -20,7 +20,7 @@ jobs:
         uses: CodeIntelligenceTesting/github-actions/start-fuzzing@v3
         with:
           ci_fuzz_api_token: ${{ secrets.CI_FUZZ_API_TOKEN }}
-          project: "projects/organizations_89d295318b3fded6_webgoat_git-95e1f92d"
+          project: ${{env.PROJECT_ID}}
           git_reference: ${{ github.sha }}
           fuzzing_server_address: ${{ env.FUZZING_SERVER_ADDRESS }}
       - id: monitor-fuzzing
@@ -38,7 +38,7 @@ jobs:
       - id: report-coverage
         name: Report Coverage
         uses: CodeIntelligenceTesting/github-actions/report-coverage@v3
-        if: ${{ github.event_name == 'pull_request' && (success() || failure()) }}
+        if: ${{ github.event_name == ‘pull_request’ && (success() || failure()) }}
         with:
           ci_fuzz_api_token: ${{ secrets.CI_FUZZ_API_TOKEN }}
           test_collection_run: ${{ steps.start-fuzzing.outputs.test_collection_run }}
@@ -49,4 +49,15 @@ jobs:
           git_reference: ${{ github.sha }}
           fuzzing_server_address: ${{ env.FUZZING_SERVER_ADDRESS }}
           dashboard_address: ${{ env.WEB_APP_ADDRESS }}
-          
+      - id: list-findings
+        name: List Findings
+        uses: CC-CIFUZZ-TEST/simple-findings-check-action@main
+        if: ${{ github.event_name == ‘pull_request’ && (success() || failure()) }}
+        with:
+          name: ‘CI Fuzz Findings’
+          test_collection_run: ${{ steps.start-fuzzing.outputs.test_collection_run }}
+          ci-fuzz-api-token: ${{ secrets.CI_FUZZ_API_TOKEN }}
+          serverUrl: ${{env.WEB_APP_ADDRESS}}
+          projectId: ${{env.PROJECT_ID}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}
